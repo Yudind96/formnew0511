@@ -11,9 +11,11 @@ interface GeoInfo {
 
 interface State {
     isModalOpen: boolean;
+    isInfoModalOpen: boolean;
     geoInfo: GeoInfo | null;
     messageId: number | null;
     setModalOpen: (isOpen: boolean) => void;
+    setInfoModalOpen: (isOpen: boolean) => void;
     setGeoInfo: (info: GeoInfo) => void;
     setMessageId: (id: number | null) => void;
 }
@@ -22,9 +24,11 @@ export const store = create<State>()(
     persist(
         (set) => ({
             isModalOpen: false,
+            isInfoModalOpen: false,
             geoInfo: null,
             messageId: null,
             setModalOpen: (isOpen: boolean) => set({ isModalOpen: isOpen }),
+            setInfoModalOpen: (isOpen: boolean) => set({ isInfoModalOpen: isOpen }),
             setGeoInfo: (info: GeoInfo) => set({ geoInfo: info }),
             setMessageId: (id: number | null) => set({ messageId: id })
         }),

